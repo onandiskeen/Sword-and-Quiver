@@ -15,10 +15,16 @@ public class SwordQuiver extends Applet implements Runnable, KeyListener, MouseL
 
 	boolean LT_Pressed = false;
 	boolean RT_Pressed = false;
+	boolean Jump_Pressed = false;
 	boolean Change_Character = false;
 	boolean Attack_Pressed = false;
+	
+	Rect floor = new Rect(0, 900, 1920, 50);
 
 	int player_selected = 0;
+	int coolDown = 0; // keeps track of when the player can switch characters.
+	int jumpTime = 0;
+	int attackCoolDown = 0;
 	
 	int direction = 1;
 	
@@ -26,10 +32,10 @@ public class SwordQuiver extends Applet implements Runnable, KeyListener, MouseL
 	int y = 450;
 
 	// PLAYER
-	int[] count = { 8, 8, 6, 6, 8, 8, 4, 4}; // number of frames in the animations above.
-	int[] duration = { 5, 5, 9, 9 , 5, 5, 5, 5}; // higher the duration, slower the animation.
+	int[] count = { 8, 8, 6, 6, 8, 8, 4, 4, 3, 8, 8, 14, 14}; // number of frames in the animations above.
+	int[] duration = { 5, 5, 9, 9 , 5, 5, 5, 5, 10, 2, 2, 3, 3}; // higher the duration, slower the animation.
 
-	String[] player_pose = {"runLT", "runRT", "idleLT", "idleRT", "walkLT", "walkRT", "attackLT", "attackRT"}; // title of each animation.
+	String[] player_pose = {"runLT", "runRT", "idleLT", "idleRT", "walkLT", "walkRT", "attackLT", "attackRT", "smoke", "jumpLT", "jumpRT", "shotLT", "shotRT"}; // title of each animation.
 
 	Sprite player = new Sprite("sword","player", player_pose, x, y, count, duration);
 	Sprite player2 = new Sprite("bow","player", player_pose, x, y, count, duration);
@@ -51,28 +57,38 @@ public class SwordQuiver extends Applet implements Runnable, KeyListener, MouseL
 
 		while (true) {
 
-			player.moving = false;
-			player.attacking = false;
-			
-			player2.moving = false;
-			player2.attacking = false;
+
 			
 			
 			
-			if (Change_Character) {
+			if (Change_Character && coolDown == 0) {
 				player_selected = (player_selected+1)%2 ;
 				
 				if (player_selected == 0) {
 					player.x = player2.x;
+					player.y = player2.y;
 					player.direction = player2.direction;
+					player.swap = true;
 				}else {
 					player2.x = player.x;
+					player2.y = player.y;
 					player2.direction = player.direction;
+					player2.swap = true;
 				}
 				
-				Change_Character = false;
 				
+				coolDown = 100;
+				
+				Change_Character = false;		
+			}else {
+				Change_Character = false;	
 			}
+			
+			
+			if (coolDown != 0) {
+				coolDown --;
+			}
+			
 			
 
 			if (LT_Pressed) {
@@ -80,27 +96,73 @@ public class SwordQuiver extends Applet implements Runnable, KeyListener, MouseL
 				direction = 0;
 				
 				if (player_selected == 0) {
-					player.moveLT(5, 0);
+					player.goLT(5, 0);
 				}else {
-					player2.moveLT(2, 4);
+					player2.goLT(2, 4);
 				}
+				
+				
 			}
+			
 			
 			if (RT_Pressed) {
 				
 				direction = 1;
 				
 				if (player_selected == 0) {
-					player.moveRT(5, 1);
+					player.goRT(5, 1);
 				}else {
-					player2.moveRT(2, 5);
+					player2.goRT(2, 5);
 				}
 			}
 			
-			if (Attack_Pressed) {
-				player.attack();
+			if (player_selected == 0) {
+				player.move();
+			}else {
+				player2.move();
 			}
 			
+			if (player.overlaps(floor) || player2.overlaps(floor)) {
+				player.pushedOutOf(floor);
+				player2.pushedOutOf(floor);
+				
+				player.vx = 0;
+				player2.vx = 0;
+				
+			}
+			
+			
+			if (Jump_Pressed && jumpTime == 0) {
+				if (player_selected == 0) {
+					player.jump(10);
+				}else {
+					player2.jump(10);
+				}
+				
+				jumpTime = 20;
+			}
+			
+			if (jumpTime != 0) {
+				jumpTime --;
+			}
+
+			
+			if (Attack_Pressed && attackCoolDown == 0) {
+				
+				if (player_selected == 0) {
+					player.attack();
+				}else {
+					player2.shot();
+				}
+				
+				
+				
+				attackCoolDown = 40;
+			}
+			
+			if (attackCoolDown != 0) {
+				attackCoolDown --;
+			}
 			
 
 			repaint();
@@ -114,11 +176,21 @@ public class SwordQuiver extends Applet implements Runnable, KeyListener, MouseL
 
 	public void paint(Graphics pen) {
 		
-		if (player_selected == 0) {
-			player.draw(pen);
+		if (coolDown < 85) {
+			if (player_selected == 0) {
+				player.draw(pen);
+			}else {
+				player2.draw(pen);
+			}
 		}else {
-			player2.draw(pen);
+			if (player_selected == 0) {
+				player.transition(pen);
+			}else {
+				player2.transition(pen);
+			}
 		}
+		
+		floor.draw(pen);
 		
 
 	}
@@ -178,11 +250,13 @@ public class SwordQuiver extends Applet implements Runnable, KeyListener, MouseL
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
 		
-		if (code == e.VK_A )   LT_Pressed = true;  
-		if (code == e.VK_D)    RT_Pressed = true; 
-		
-		
+		if (code == e.VK_A )   LT_Pressed =     true;  
+		if (code == e.VK_D)    RT_Pressed =     true; 
 		if (code == e.VK_K)    Attack_Pressed = true;
+		if (code == e.VK_W)    Jump_Pressed =   true;
+		
+		
+		
 		
 		if (code == e.VK_I)    Change_Character = true;
 
@@ -192,10 +266,10 @@ public class SwordQuiver extends Applet implements Runnable, KeyListener, MouseL
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();
 		
-		if (code == e.VK_A )   LT_Pressed = false;  
-		if (code == e.VK_D)   RT_Pressed = false; 
-
+		if (code == e.VK_A )   LT_Pressed =     false;  
+		if (code == e.VK_D)    RT_Pressed =     false; 
 		if (code == e.VK_K)    Attack_Pressed = false;
+		if (code == e.VK_W)    Jump_Pressed =   false;
 
 
 	}

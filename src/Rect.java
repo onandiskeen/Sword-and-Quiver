@@ -7,14 +7,12 @@ public class Rect
 	
 	int w;
 	int h;
-	
-	int old_x;
-	int old_y;
+
 	
 	boolean held = false;
 
-	double vy;
-	double vx;
+	double vy = 0;
+	double vx = 0;
 		
 	static double G = .6;
 		
@@ -27,8 +25,42 @@ public class Rect
 		this.w = w;
 		this.h = h;
 
-		old_x = x;
-		old_y = y;	
+	}
+	
+	
+	public void setVelocity(double vx, double vy) {
+		
+		this.vx = vx;
+		this.vy = vy;
+		
+	}
+	
+	
+	
+	
+	public void goLT(int vx) {
+		
+		this.vx = -vx;
+	}
+	
+	public void goRT (int vx) {
+		
+		this.vx = +vx;
+	}
+	
+	public void jump(int h) {
+		
+		vy = -h;
+		
+	}
+    
+	public void move() {
+		
+		x +=vx;
+		y += vy; // + G/2;
+		
+
+		vy += G;
 	}
 	
 	public void grabbed()
@@ -41,32 +73,7 @@ public class Rect
 		held = false;
 	}
 	
-	public void moveLT(int dx)
-	{
-		old_x = x;
-		
-		x -= dx;		
-	}
-	
-	public void moveRT(int dx)
-	{
-		old_x = x;
-		
-		x += dx;		
-	}
-	
-	public void moveUP(int dy)
-	{
-		old_y = y;
-		
-		y -= dy;
-	}
-	public void moveDN(int dy)
-	{
-		old_y = y;
-		
-		y += dy;
-	}
+
 	
 	public void moveBy(int dx, int dy)
 	{
@@ -110,22 +117,22 @@ public class Rect
 	
 	public boolean cameFromLeftOf(Rect r)
 	{
-		return old_x + w < r.x;
+		return x-vx + w < r.x;
 	}
 	
 	public boolean cameFromRightOf(Rect r)
 	{
-		return r.x + r.w < old_x;
+		return r.x + r.w < x-vx;
 	}
 	
 	public boolean cameFromAbove(Rect r)
 	{
-		return old_y + h < r.y;
+		return y-vy + h < r.y;
 	}
 	
 	public boolean cameFromBelow(Rect r)
 	{
-		return r.y + r.h < old_y;
+		return r.y + r.h < y-vy;
 	}
 	
 	public void pushbackLeftFrom(Rect r)
@@ -141,6 +148,7 @@ public class Rect
 	public void pushbackUpFrom(Rect r)
 	{
 		y = r.y - h - 1;
+		vy = 0; // sets velocity to zero which prevents the player from falling through the floor.
 	}
 	
 	public void pushbackDownFrom(Rect r)
@@ -160,42 +168,9 @@ public class Rect
 		return "new Rect(" + x + ", " + y + ", " + w + ", " + h + "),";
 	}
 
-	//physics
+
 		
-		public void goUP(int vy) {
-			
-			this.vy = -vy;
-			
-		}
 		
-		public void goDN (int vy) {
-			
-			this.vy = +vy;
-		}
-		
-		public void goLT(int vx) {
-			
-			this.vx = -vx;
-		}
-		
-		public void goRT (int vx) {
-			
-			this.vx =+ vx;
-		}
-		
-		public void jump(int h) {
-			
-			vy = -h;
-			
-		}
-	    
-		public void move() {
-			
-			x +=vx;
-			y += vy +G/2;
-			
-			vy +=G;
-		}
 	
 
 }

@@ -2,18 +2,22 @@ import java.awt.*;
 
 public class Animation {
 	private Image[] image;
+	private Image[] characterTransition;
+ 	
+	
 	private int next;
 	
 	private int duration;
 	private int delay;
-	
-	private Image[] idle;
 	
 	
 	public Animation(String player, String name, int count, int duration) {
 		
 		
 		image = new Image[count];
+		
+		characterTransition = new Image[3];
+
 		
 		for (int i = 0; i < count; i ++) {
 			image[i] = Toolkit.getDefaultToolkit().getImage("player_" + player + "/AllMoves/" + name + "_" + i + ".png");
@@ -42,4 +46,5 @@ public class Animation {
 		
 		return image[next];
 	}
+	
 }
