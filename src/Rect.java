@@ -113,15 +113,21 @@ public class Rect
 		if(cameFromBelow(r))    pushbackDownFrom(r);
 		if(cameFromLeftOf(r))   pushbackLeftFrom(r);		
 		if(cameFromRightOf(r))	pushbackRightFrom(r);
+		
+		vx = 0;
+		
+		
 	}
 	
 	public boolean cameFromLeftOf(Rect r)
 	{
+		
 		return x-vx + w < r.x;
 	}
 	
 	public boolean cameFromRightOf(Rect r)
 	{
+		
 		return r.x + r.w < x-vx;
 	}
 	
@@ -138,6 +144,7 @@ public class Rect
 	public void pushbackLeftFrom(Rect r)
 	{
 		x = r.x - w - 1;
+		
 	}
 	
 	public void pushbackRightFrom(Rect r)

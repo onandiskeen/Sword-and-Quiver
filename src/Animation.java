@@ -11,6 +11,20 @@ public class Animation {
 	private int delay;
 	
 	
+	public Animation(String name, int count, int duration) {
+		image = new Image[count];
+		
+		for (int i = 0; i < count; i ++) {
+			image[i] = Toolkit.getDefaultToolkit().getImage(name + "_" + i + ".png");
+
+		}
+		
+		
+		this.duration = duration;
+		this.delay = duration;
+	}
+	
+	
 	public Animation(String player, String name, int count, int duration) {
 		
 		
@@ -31,6 +45,8 @@ public class Animation {
 	
 	public Image nextImage() {
 		
+		
+		
 		if (delay == 0) {
 			
 			next++;
@@ -41,8 +57,33 @@ public class Animation {
 			
 			delay = duration;
 		}
+			delay --;
 		
-		delay --;
+		
+		
+			
+		return image[next];
+	}
+	
+	
+	public Image loadBarImage() {
+
+			next++;
+			
+			if (next == image.length) {
+				next = 0;
+			}
+			
+			delay = duration;
+
+	
+		return image[next];
+	}
+	
+	
+
+	
+	public Image currentImage() {
 		
 		return image[next];
 	}
