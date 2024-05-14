@@ -12,6 +12,7 @@ public class Sprite extends Rect {
 	boolean jumping = false;
 	boolean swap = false;
 	boolean arrowShot = false;
+	boolean dead  = false;
 
 	
 	Image[] arrow = new Image[2];
@@ -28,6 +29,7 @@ public class Sprite extends Rect {
 	int jumpCounter = 0;
 	int attackCounter = 0;
 	int arrowCounter = 0;
+	int deathCounter  = 0;
 	
 	
 	public Sprite(String player,String name, String [] pose, int x, int y, int [] count, int [] duration) {
@@ -84,6 +86,7 @@ public class Sprite extends Rect {
 			
 			
 		}else if (shooting) {
+			
 			if (direction == 0) {
 				pen.drawImage(animations[11].nextImage(), x, y, w, h, null);
 			}else {
@@ -93,6 +96,7 @@ public class Sprite extends Rect {
 			attackCounter++;
 			
 			if (attackCounter == 42) {
+
 				arrowX = x;
 				arrowY = y;
 				arrowDirection = direction;
@@ -106,7 +110,7 @@ public class Sprite extends Rect {
 			pen.drawImage(animations[action].nextImage(), x, y, w, h, null);
 			
 			moving = false;
-		}else {
+		}else if (!moving && !dead){
 			
 			if (direction == 0) {
 				pen.drawImage(animations[2].nextImage(), x, y, w, h, null);
@@ -115,13 +119,26 @@ public class Sprite extends Rect {
 			}else {
 				pen.drawImage(animations[3].nextImage(), x, y, w, h, null);
 			}
+		}else if (dead && deathCounter < 60) {
+			if (direction == 0) {
+				pen.drawImage(animations[13].nextImage(), x, y, w, h, null);
+				
+				
+			}else {
+				pen.drawImage(animations[14].nextImage(), x, y, w, h, null);
+			}
+			
+			deathCounter ++;
 		}
 		
 		
 		if (arrowShot) {
 			arrowCounter ++;
 			
+			
+			
 			if (arrowDirection == 0) {
+				
 				pen.drawImage(arrow[1], (arrowX+10)-arrowCounter *10, arrowY+70, 48, 48, null);
 			}else {
 				pen.drawImage(arrow[0], (arrowX+40)+arrowCounter *10, arrowY+70, 48, 48, null);
@@ -145,7 +162,7 @@ public class Sprite extends Rect {
 	
 	public void  goLT(int vx, int action){
 		
-		if (!attacking && !shooting) {
+		if (!attacking && !shooting && !dead) {
 			
 			this.action = action;
 			
@@ -161,7 +178,7 @@ public class Sprite extends Rect {
 
 	public void goRT(int vx, int action){
 		
-		if (!attacking && !shooting) {
+		if (!attacking && !shooting && !dead) {
 
 			
 			this.action = action;
@@ -180,9 +197,13 @@ public class Sprite extends Rect {
 	
 	public void jump(int h) {
 		
-		jumping = true;
+		if (!attacking && !shooting && !dead) {
+		
+			jumping = true;
 			
-		vy = -h;
+			vy = -h;
+		
+		}
 		
 	}
 	
@@ -192,6 +213,10 @@ public class Sprite extends Rect {
 	
 	public void attack() {
 		attacking = true;
+	}
+	
+	public void dead() {
+		dead = true;
 	}
 	
 	

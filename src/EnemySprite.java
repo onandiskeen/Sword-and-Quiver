@@ -1,10 +1,13 @@
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 
 public class EnemySprite extends Rect{
 
 	
 	Animation [] animations;
+	
+	Image [] healthBar;
 	
 	boolean moving = false;
 	boolean agro = false;
@@ -14,6 +17,7 @@ public class EnemySprite extends Rect{
 	int direction = 1;
 	int idleCounter = 0;
 	int deathCounter = 0;
+	int coolDown = 0;
 	
 	
 	
@@ -22,6 +26,7 @@ public class EnemySprite extends Rect{
 	
 	EnemyHitBox enemy1 = new EnemyHitBox(200, 825, 40, 100);
 	EnemySight sight = new EnemySight(x, y, 65, 10);
+	EnemyHurtBox hurtBox = new EnemyHurtBox(0, 0, 70, 10);
 
 	
 	public EnemySprite(String name, String [] pose, int x, int y, int [] count, int [] duration) {
@@ -30,10 +35,16 @@ public class EnemySprite extends Rect{
 		super(x, y, 200, 200);
 		
 		animations  = new Animation[pose.length];
+		healthBar = new Image[5];
 				
 		
 		for (int i = 0; i < animations.length; i++) {
 			animations[i] = new Animation("spear_skeleton/AllMoves/" + name + "_" + pose[i], count[i], duration[i]);
+		}
+		
+		for (int i = 0; i < 5; i ++) {
+			healthBar[i] = Toolkit.getDefaultToolkit().getImage("enemyHealthBar_" + i + ".png");
+
 		}
 		
 	}
@@ -66,9 +77,13 @@ public class EnemySprite extends Rect{
 					pen.drawImage(animations[1].nextImage(), x, y, w, h, null);
 				}
 			}
+			 
+		
+			 pen.drawImage(healthBar[health/25], x + 40, y + 40, 107, 46, null);
 			
 			//enemy1.draw(pen);
 			//sight.draw(pen);
+			//hurtBox.draw(pen);
 		}
 
 		
@@ -77,8 +92,8 @@ public class EnemySprite extends Rect{
 	
 	public void idle() {
 		
-		enemy1.track(this);
-		sight.track(this, direction);
+		enemy1.track(this, dead);
+		sight.track(this, direction, dead);
 		
 		if (health <= 0) {
 			moving = false;
@@ -132,8 +147,8 @@ public class EnemySprite extends Rect{
 			agro = false;
 			dead = true;
 		}else {
-			enemy1.track(this);
-			sight.track(this, direction);
+			enemy1.track(this, dead);
+			sight.track(this, direction, dead);
 
 			moving = true;
 			
@@ -148,14 +163,28 @@ public class EnemySprite extends Rect{
 			
 			this.move();
 			
-			if (sight.overlaps(r)) {
+			if (sight.overlaps(r) && coolDown < 20) {
 				attacking = true;
+				hurtBox.track(this, direction, coolDown);
+				coolDown++;
 			}else {
 				attacking = false;
+				hurtBox.x = 0;
+				hurtBox.y = 0;
+				
+				coolDown++;
 			}
+			
+			if (coolDown == 200) {
+				coolDown = 0;
+			}
+			
+			if (hurtBox.overlaps(r)) {
+				r.hit();
+			}
+			
+
 		}
-		
-		
  
 	}
 	

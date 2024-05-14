@@ -35,7 +35,6 @@ public class HurtBox extends Rect{
 		
 		
 		
-		
 		if  (arrowCounter == 0) {
 			this.x = 0;
 			this.y = 0;

@@ -8,9 +8,16 @@ public class EnemyHitBox extends Rect{
 	}
 	
 	
-	public void track(EnemySprite s) {
-		this.x = s.x + 80;
-		this.y = s.y + 100;
+	public void track(EnemySprite s, boolean dead) {
+		
+		if (!dead) {
+			this.x = s.x + 80;
+			this.y = s.y + 100;
+		}else {
+			this.x = 1920;
+			this.y = 1920;
+		}
+		
 	}
 	
 	
