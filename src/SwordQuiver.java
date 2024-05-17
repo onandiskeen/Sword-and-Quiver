@@ -1,4 +1,5 @@
 import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -9,6 +10,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
 
 public class SwordQuiver extends GameBase{
 
@@ -27,14 +29,15 @@ public class SwordQuiver extends GameBase{
 	
 	
 
-	Sprite player = new Sprite("sword","player", player_pose, x, y, count, duration);
-	Sprite player2 = new Sprite("bow","player", player_pose, x, y, count, duration);
+	Sprite player = new Sprite("sword","player", player_pose, 10, y, count, duration);
+	Sprite player2 = new Sprite("bow","player", player_pose, 10, y, count, duration);
 	
-	
-	
-	
-	Area1 area1 = new Area1(player, player2, pressing);
+	StartScreen startScreen = new StartScreen(player, player2, pressing);
 	Area2 area2 = new Area2(player, player2, pressing);
+	Area1 area1 = new Area1(player, player2, pressing);
+	GameOver gameOver = new GameOver(player, player2, pressing);
+	YouWin youWin = new YouWin(player, player2, pressing);
+	
 	
 	public void init() {
 		
@@ -52,7 +55,7 @@ public class SwordQuiver extends GameBase{
 	}
 
 	public void paint(Graphics pen) {
-	
+
 		Area.area[0].paint(pen);
 		
 

@@ -1,4 +1,5 @@
 import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -9,6 +10,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public abstract class GameBase extends Applet implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	
@@ -90,13 +94,18 @@ public abstract class GameBase extends Applet implements Runnable, KeyListener, 
 
 	
 	public void init() {
-
-
 		addKeyListener(this);
 		requestFocus();
 		offScreenImg = this.createImage(1920, 1080);
 		offScreenPen = offScreenImg.getGraphics();
-
+		
+		System.out.println(this.getCodeBase());
+		
+		
+		addMouseListener(this);
+		
+		addMouseMotionListener(this);
+		
 		
 		Thread t = new Thread(this);
 		t.start();

@@ -13,13 +13,14 @@ public class EnemySprite extends Rect{
 	boolean agro = false;
 	boolean attacking = false;
 	boolean dead;
+	boolean enemyDead = false;
 	
 	int direction = 1;
 	int idleCounter = 0;
 	int deathCounter = 0;
 	int coolDown = 0;
 	
-	
+	public static int deadEnemies = 0;
 	
 	int health = 100;
 	
@@ -45,6 +46,19 @@ public class EnemySprite extends Rect{
 		for (int i = 0; i < 5; i ++) {
 			healthBar[i] = Toolkit.getDefaultToolkit().getImage("enemyHealthBar_" + i + ".png");
 
+		}
+		
+	}
+	
+	public boolean isDead() {
+		
+		if (enemyDead == false && dead) {
+			
+			enemyDead = true;
+			
+			return true;
+		}else {
+			return false;
 		}
 		
 	}

@@ -21,24 +21,48 @@ public class HitBox extends Rect {
 		
 	}
 
-	public void track(Sprite s) {
+	public void trackHealth(Sprite s) {
 
 		if (health <= 0) {
 			s.dead();
-			this.x = 1920;
-			this.y = 1080;
-		}else {
-			this.x = s.x + 40;
-			this.y = s.y + 55;
+//			this.x = 1920;
+//			this.y = 1080;
 		}
+	}
+	
+	
+	public void  goLT(int vx){
+
+
+			this.vx = -vx;	
+
+		
+	}
+	
+	public  void  goRT(int vx){
+
+			this.vx = +vx;	
+
+		
+	}
+	
+	
+	public void jump(int h, boolean attacking, boolean shooting) {
+		
+		if (!attacking && !shooting && !dead) {
+			
+			this.vy = -h;
+		
+		}
+		
 	}
 	
 	
 	
 	public void draw(Graphics pen){
 		
-		//pen.setColor(Color.blue);
-		//pen.drawRect(x, y, w, h);
+		pen.setColor(Color.blue);
+		pen.drawRect(x, y, w, h);
 		
 		if(health >= 0) {
 			pen.drawImage(healthBar[health/20], -65, 0, 534, 75, null);

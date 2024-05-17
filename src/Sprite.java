@@ -32,6 +32,7 @@ public class Sprite extends Rect {
 	int deathCounter  = 0;
 	
 	
+	
 	public Sprite(String player,String name, String [] pose, int x, int y, int [] count, int [] duration) {
 		
 		
@@ -152,7 +153,7 @@ public class Sprite extends Rect {
 			
 				
 		}
-			
+
 	}
 	
 	public void transition(Graphics pen) {
@@ -160,7 +161,7 @@ public class Sprite extends Rect {
 	}
 
 	
-	public void  goLT(int vx, int action){
+	public boolean  goLT(int vx, int action){
 		
 		if (!attacking && !shooting && !dead) {
 			
@@ -171,12 +172,15 @@ public class Sprite extends Rect {
 			
 			moving = true;
 			direction = 0;
+			
 		}
+		
+		return !attacking && !shooting && !dead;
 		
 	}
 	
 
-	public void goRT(int vx, int action){
+	public boolean goRT(int vx, int action){
 		
 		if (!attacking && !shooting && !dead) {
 
@@ -188,22 +192,28 @@ public class Sprite extends Rect {
 			
 			moving = true;
 			direction = 1;
+			
+		
 		}
 		
+		return !attacking && !shooting && !dead;
 		
 	}
 
 
 	
-	public void jump(int h) {
+	public boolean jumping(int h) {
 		
 		if (!attacking && !shooting && !dead) {
 		
 			jumping = true;
 			
 			vy = -h;
+			
 		
 		}
+		
+		return !attacking && !shooting && !dead;
 		
 	}
 	
